@@ -19,10 +19,15 @@ export default {
     treeConfig: {
       type: Array,
       default: () => [],
+    },
+
+    getActions: {
+      type: Function,
+      default: () => null,
     }
   },
 
-  setup(props) {
+  setup(props, {emit}) {
     const container = ref(null);
     const tree = ref(null);
 
@@ -65,7 +70,7 @@ export default {
         tree.value.model.setInput(props.directory);
         tree.value.model.onDidSelect((e) => {
           if (e.selection.length) {
-            props.onClickFile(e.selection[0]);
+            emit('on-click-file', e.selection[0]);
           }
         });
 

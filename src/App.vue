@@ -3,9 +3,9 @@
       <div class="workspaceContainer" v-if="rootNode">
         <MonacoTree 
           :directory="rootNode"
-          :treeConfig="treeConfig"
-          :getActions="getActions"
-          @onClickFile="onClickFile"
+          :tree-config="treeConfig"
+          :get-actions="getActions"
+          @on-click-file="onClickFile"
         />
       </div>
     </div>
@@ -13,7 +13,7 @@
 
 <script>
 import { onMounted, unref, ref } from 'vue';
-import { MonacoTree, TreeDnD, generateDirectoryTree, FileTemplate, directoryListing, Action, Separator } from "../monaco-tree";
+import { MonacoTree, TreeDnD, generateDirectoryTree, FileTemplate, directoryListing, Action, Separator } from "./components/monaco-tree";
 
 export default {
   name: 'App',
@@ -26,6 +26,8 @@ export default {
     const rootNode = ref(null);
     const treeConfig = ref(null);
     const rootDirectoryName = ref("demo");
+    const lastClickedFile = ref(null);
+    const lastClickedTime = ref(null);
 
     onMounted(() => {
         treeConfig.value = {
@@ -61,7 +63,7 @@ export default {
             },
 
             renderer: {
-              getHeight: function(tree, element){
+              getHeight: function(){
                 return 24;
               },
 
@@ -73,7 +75,7 @@ export default {
                 templateData.set(element);
               },
 
-              disposeTemplate: function(tree, templateId, templateData) {
+              disposeTemplate: function() {
                 FileTemplate.dispose();
               }
             },
@@ -87,7 +89,7 @@ export default {
         rootNode.value = generateDirectoryTree(directoryListing, unref(rootDirectoryName))
     });
 
-    const getActions = (file, event) => {
+    const getActions = (file) => {
       const actions = [];
 
       // Directory options
@@ -108,7 +110,6 @@ export default {
         }));
           
       }
-      
           
       actions.push(new Action("4", "Download", "", true, () => {
         console.log("action Download on " + file.name);
@@ -121,26 +122,27 @@ export default {
 
       return actions;
     }
+    
+      const onDoubleClickFile = (file) => {
+        console.log(file.name + " double clicked");
+      };
 
     const onClickFile = (file) => {
       if (file.isDirectory) {
         return;
       }
 
-      if (Date.now() - this.lastClickedTime < 500 && this.lastClickedFile === file) {
-        this.onDoubleClickFile(file);
+      if (Date.now() - unref(lastClickedTime) < 500 && unref(lastClickedFile) === file) {
+        onDoubleClickFile(file);
       } 
       else {
         console.log(file.name + " clicked");
       }
 
-      this.lastClickedTime = Date.now();
-      this.lastClickedFile = file;
+      lastClickedTime.value = Date.now();
+      lastClickedFile.value = file;
     };
 
-    const onDoubleClickFile = (file) => {
-      console.log(file.name + " double clicked");
-    };
 
     return {
       rootNode,
