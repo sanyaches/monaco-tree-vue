@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
+    "monaco-editor": "^0.24.0",
     "vue": "^3.0.0"
   },
   "devDependencies": {
