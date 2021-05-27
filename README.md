@@ -1,6 +1,6 @@
 # monaco-tree-vue
 
-## Adopting the [monaco-tree](https://github.com/BlueMagnificent/monaco-tree) package for Vue3
+## Adapting the [monaco-tree](https://github.com/BlueMagnificent/monaco-tree) package for Vue3
 
 ## Project setup
 
