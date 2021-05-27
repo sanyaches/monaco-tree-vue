@@ -15,7 +15,7 @@ import
 export function getController(target, getActionsFn, resolveMenuHeight) {
     
 
-    const services = new DynamicStandaloneServices(target.container, {});
+    const services = new DynamicStandaloneServices(target, {});
     
     const telemetryService = services.get(ITelemetryService);
     const notificationService = services.get(INotificationService);

@@ -1,80 +1,68 @@
 <template>
-  <div class="fill" ref="container" />
+  <div class="fill" ref="container" id="tree" />
 </template>
 
 <script>
 import { createController } from "./monaco-controller";
 import { Tree } from "./monaco-utils";
-import { onBeforeUnmount, onMounted, watch, ref, unref } from 'vue';
+import { onBeforeUnmount, onMounted, watch, ref, unref, toRaw, reactive } from 'vue';
 
 export default {
   name: 'MonacoTree',
 
-  props: {
-    directory: {
-      type: String,
-      default: '',
-    },
-
-    treeConfig: {
-      type: Array,
-      default: () => [],
-    },
-
-    getActions: {
-      type: Function,
-      default: () => null,
-    }
-  },
+  props: ['directory','treeConfig','getActions'],
 
   setup(props, {emit}) {
     const container = ref(null);
-    const tree = ref(null);
+    let tree = reactive(null);
 
     const ensureTree = () => {
       if (unref(container).lastChild) {
         unref(container).removeChild(unref(container).lastChild);
       }
 
-      const { treeConfig, getActions } = props;
+      const treeConfig = toRaw(props.treeConfig);
+      const getActions = toRaw(props.getActions);
 
-      treeConfig.controller = createController({container: unref(container)}, getActions, true),
+      treeConfig.controller = createController(document.getElementById('tree'), getActions, true),
   
-      tree.value = new Tree(unref(container), treeConfig );
+      tree = new Tree(container.value, treeConfig);
     };
       
     const expandTree = (tree) => {
-      const model = tree.model;
+      const model = toRaw(tree).model;
       const elements = [];
 
       let item;
       const nav = model.getNavigator();
 
-      while (item === nav.next()) {
+      while (item = nav.next()) {
         elements.push(item);
       }
 
       for (let i = 0, len = elements.length; i < len; i++) {
-          model.expand(elements[i]);
+        model.expand(elements[i]);
       }
     };
 
       
     const onLayout = () => {
-      tree.value.layout();
+      toRaw(tree).layout();
     };
 
     onMounted(() => {
-        ensureTree();
+      ensureTree();
 
-        tree.value.model.setInput(props.directory);
-        tree.value.model.onDidSelect((e) => {
-          if (e.selection.length) {
-            emit('on-click-file', e.selection[0]);
-          }
-        });
+      const rawDirectory = toRaw(props.directory);
 
-        document.addEventListener("layout", onLayout);
+      toRaw(tree).model.setInput(rawDirectory); //Todo: not working...
+      toRaw(tree).model.onDidSelect((e) => {
+        if (e.selection.length) {
+          emit('on-click-file', e.selection[0]);
+        }
+      });
+
+      document.addEventListener("layout", onLayout);
     });
 
     onBeforeUnmount(() => {
@@ -84,10 +72,10 @@ export default {
 
     watch(props.directory, (newDirectory, oldDirectory) => {
       if (newDirectory !== oldDirectory) {
-        tree.value.model.setInput(newDirectory);
+        toRaw(tree).model.setInput(newDirectory);
       } else {
-        tree.value.model.refresh();
-        expandTree(tree);
+        toRaw(tree).model.refresh();
+        expandTree(toRaw(tree));
       }
     });
 
