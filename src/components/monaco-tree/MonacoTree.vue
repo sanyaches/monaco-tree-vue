@@ -67,7 +67,7 @@ export default {
 
     onBeforeUnmount(() => {
       document.removeEventListener("layout", onLayout);
-    }),
+    });
 
 
     watch(props.directory, (newDirectory, oldDirectory) => {
