@@ -34,20 +34,6 @@ export class Template {
 
 
 export class FileTemplate extends Template {
-
-  /**
-   *Creates an instance of FileTemplate.
-   * @param {HTMLElement} container
-   * @memberof FileTemplate
-   */
-  constructor(container) {
-    super(container);
-  }
-
-  dispose() {
-    // TODO dispose resources?
-  }
-
   /**
    *Set the file
    *

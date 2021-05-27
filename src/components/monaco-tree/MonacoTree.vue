@@ -55,7 +55,7 @@ export default {
 
       const rawDirectory = toRaw(props.directory);
 
-      toRaw(tree).model.setInput(rawDirectory); //Todo: not working...
+      toRaw(tree).model.setInput(rawDirectory);
       toRaw(tree).model.onDidSelect((e) => {
         if (e.selection.length) {
           emit('on-click-file', e.selection[0]);
