@@ -1,5 +1,5 @@
 {
-  "name": "editor-tree",
+  "name": "monaco-tree-vue",
   "version": "0.1.0",
   "private": true,
   "scripts": {
